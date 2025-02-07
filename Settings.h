@@ -1,0 +1,8 @@
+#define TweakName @"YouSlider"
+#define EnabledKey @"YouSliderEnabled"
+#define SliderColorKey @"YSSliderColor"
+#define SliderColorValueKey @"YSSliderColorValue"
+#define ScrubberImageColorKey @"YSScrubberColor"
+#define ScrubberImageColorValueKey @"YSScrubberColorValue"
+#define ScrubberImageKey @"YSScrubberImage"
+#define ScrubberSizeKey @"YSScrubberSize"

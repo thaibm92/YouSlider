@@ -1,0 +1,31 @@
+"ENABLED" = "Enabled";
+"ENABLED_DESC" = "App restart is required.";
+
+"SLIDER_COLOR" = "Change slider color";
+"SLIDER_COLOR_DESC" = "Change the color of the slider. This also replaces the gradient style of the slider for recent YouTube versions.";
+"SLIDER_COLOR_VALUE" = "Slider color value";
+
+"SCRUBBER_COLOR" = "Change scrubber color";
+"SCRUBBER_COLOR_DESC" = "Change the color of the scrubber. This also paints the entire custom scrubber image with the specified color.";
+"SCRUBBER_COLOR_VALUE" = "Scrubber color value";
+
+"SCRUBBER_IMAGE" = "Use custom scrubber image";
+"SCRUBBER_IMAGE_DESC" = "Use a custom image for the scrubber. The image will replace the default circle scrubber.";
+
+"IMPORT_IMAGE" = "Import scrubber image";
+"IMPORT_IMAGE_DESC" = "Import an image to use as the scrubber from the clipboard. For the optimal experience, the image should not be larger than 48px by 48px.";
+
+"IMPORT_THIS_IMAGE" = "Import this image?";
+"IMPORT_THIS_IMAGE_DESC" = "The image will be saved to the application Documents folder and used for the video scrubber.";
+
+"IMAGE_TOO_LARGE" = "Image too large";
+"IMAGE_TOO_LARGE_DESC" = "The image is too large. The image should not be larger than 48px by 48px.";
+
+"VIEW_CURRENT_IMAGE" = "View current scrubber image";
+
+"NO_IMAGE" = "No image found";
+"NO_IMAGE_DESC" = "No image was found in the clipboard. Ensure that an image is copied to the clipboard before importing.";
+
+"SCRUBBER_SIZE" = "Increase scrubber size";
+"SCRUBBER_SIZE_DESC" = "Increase the size of the scrubber. The scrubber size is scaled based on the default scrubber size. You may have to restart the app for the changes to take effect.";
+"SCRUBBER_SIZE_DEFAULT" = "Default";
