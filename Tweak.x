@@ -1,19 +1,22 @@
+#import <UIKit/UIImage+Private.h>
+#import <YouTubeHeader/UIColor+YouTube.h>
+#import <YouTubeHeader/UIImage+YouTube.h>
 #import <YouTubeHeader/YTColor.h>
+#import <YouTubeHeader/YTInlineMutedPlaybackScrubberView.h>
+#import <YouTubeHeader/YTInlineMutedPlaybackScrubbingSlider.h>
 #import <YouTubeHeader/YTIPlayerBarDecorationModel.h>
 #import <YouTubeHeader/YTMainAppVideoPlayerOverlayViewController.h>
 #import <YouTubeHeader/YTPlayerBarController.h>
 #import <YouTubeHeader/YTPlayerBarRectangleDecorationView.h>
 #import <YouTubeHeader/YTPlayerBarSegmentView.h>
 #import <YouTubeHeader/YTSegmentableInlinePlayerBarView.h>
-#import <YouTubeHeader/UIColor+YouTube.h>
-#import <UIKit/UIImage+Private.h>
 #import "Settings.h"
 
-@interface YTModularPlayerBarView (Addition)
-@property (retain, nonatomic) UIImageView *tweakCustomScrubberImageView;
+@interface UIImageAsset (Private)
+@property (nonatomic, copy, readwrite) NSString *assetName;
 @end
 
-@interface YTInlinePlayerBarView (Addition)
+@interface YTModularPlayerBarView (Addition)
 @property (retain, nonatomic) UIImageView *tweakCustomScrubberImageView;
 @end
 
@@ -30,7 +33,7 @@ extern UIImage *GetScrubberImage();
 extern NSString *GetSliderColor();
 extern int GetSelection(NSString *key);
 
-static UIColor *sliderUIColor() {
+UIColor *sliderUIColor() {
     NSString *color = GetSliderColor();
     return color ? [UIColor LOT_colorWithHexString:color] : nil;
 }
@@ -46,12 +49,21 @@ static CGFloat getBaseScrubberScale() {
     return 1 + (scrubberSize / 100.0);;
 }
 
+static void updateScrubberSize(UIView *scrubberCircle, CGFloat scale) {
+    CGRect frame = scrubberCircle.frame;
+    CGFloat size = DEFAULT_SCRUBBER_SIZE * scale;
+    if (!IsEnabled(ScrubberImageKey))
+        size /= YOUTUBE_SCRUBBER_SCALE;
+    scrubberCircle.frame = CGRectMake(frame.origin.x, frame.origin.y, size, size);
+    if (!IsEnabled(ScrubberImageKey))
+        scrubberCircle.layer.cornerRadius = size / 2;
+}
+
 static void initScrubberCircle(UIView *self) {
     CGFloat scrubberScale = getBaseScrubberScale();
     if (scrubberScale == -1) return;
     UIView *scrubberCircle = [self valueForKey:@"_scrubberCircle"];
-    CGFloat size = DEFAULT_SCRUBBER_SIZE * scrubberScale;
-    scrubberCircle.frame = CGRectMake(0, 0, size, size);
+    updateScrubberSize(scrubberCircle, scrubberScale);
 }
 
 static void updateScrubberColor(UIView *self) {
@@ -66,9 +78,8 @@ static void updateScrubberColor(UIView *self) {
 }
 
 static CGFloat getScrubberScale(CGFloat scale) {
-    CGFloat scrubberScale = getBaseScrubberScale();
-    if (scrubberScale == -1) return scale;
-    return scrubberScale * scale / YOUTUBE_SCRUBBER_SCALE + 0.001;
+    if (!IsEnabled(ScrubberImageKey)) return scale;
+    return scale / YOUTUBE_SCRUBBER_SCALE + 0.00001;
 }
 
 static void setTweakCustomScrubberIcon(id self_) {
@@ -228,9 +239,56 @@ static void findViewAndSetScrubberIcon(YTMainAppVideoPlayerOverlayViewController
 
 %end
 
+%hook YTInlineMutedPlaybackScrubberView
+
+- (void)addGradient {
+    if (IsEnabled(SliderColorKey)) return;
+    %orig;
+}
+
+- (void)initScrubberWithMode:(int)mode {
+    %orig;
+    if (mode == 0) return;
+    YTInlineMutedPlaybackScrubbingSlider *slider = [self valueForKey:@"_playingProgress"];
+    if (IsEnabled(SliderColorKey)) {
+        UIColor *color = sliderUIColor();
+        if (color)
+            [slider setMinimumTrackImage:[slider.currentMinimumTrackImage _flatImageWithColor:color] forState:UIControlStateNormal];
+    }
+}
+
+%end
+
+%hook YTInlineMutedPlaybackScrubbingSlider
+
+- (void)setThumbImage:(UIImage *)image forState:(UIControlState)state {
+    if (![self.accessibilityIdentifier isEqualToString:@"id.player.scrubber.slider"] || [image.imageAsset.assetName isEqualToString:@"transparent"]) {
+        %orig;
+        return;
+    }
+    CGSize originalSize = image.size;
+    if (IsEnabled(ScrubberImageKey)) {
+        UIImage *newImage = GetScrubberImage();
+        if (newImage) {
+            originalSize = CGSizeMake(DEFAULT_SCRUBBER_SIZE, DEFAULT_SCRUBBER_SIZE);
+            image = newImage;
+        }
+    } else if (IsEnabled(ScrubberImageColorKey)) {
+        UIColor *scrubberColor = scrubberUIColor();
+        if (scrubberColor)
+            image = [image _flatImageWithColor:scrubberColor];
+    }
+    CGFloat scrubberScale = getBaseScrubberScale();
+    if (scrubberScale != -1)
+        image = [image yt_imageScaledToSize:CGSizeMake(originalSize.width * scrubberScale, originalSize.height * scrubberScale)];
+    %orig;
+}
+
+%end
+
 %hook YTMainAppVideoPlayerOverlayViewController
 
-- (void)setWatchNextResponse:(id)response loading:(bool)loading {
+- (void)setWatchNextResponse:(id)response loading:(BOOL)loading {
     findViewAndSetScrubberIcon(self);
     %orig;
 }

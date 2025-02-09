@@ -21,14 +21,10 @@ static const NSInteger TweakSection = 'ytsl';
 @end
 
 extern UIColor *scrubberUIColor();
+extern UIColor *sliderUIColor();
 
 BOOL IsEnabled(NSString *key) {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if ([key isEqualToString:EnabledKey] && ![defaults objectForKey:key]) {
-        [defaults setBool:YES forKey:key];
-        return YES;
-    }
-    return [defaults boolForKey:key];
+    return [[NSUserDefaults standardUserDefaults] boolForKey:key];
 }
 
 NSString *GetSliderColor() {
@@ -61,7 +57,7 @@ int GetSelection(NSString *key) {
 NSBundle *TweakBundle() {
     static NSBundle *bundle = nil;
     static dispatch_once_t onceToken;
-	dispatch_once(&onceToken, ^{
+    dispatch_once(&onceToken, ^{
         NSString *tweakBundlePath = [[NSBundle mainBundle] pathForResource:TweakName ofType:@"bundle"];
         bundle = [NSBundle bundleWithPath:tweakBundlePath ?: PS_ROOT_PATH_NS(@"/Library/Application Support/" TweakName ".bundle")];
     });
@@ -157,7 +153,7 @@ NSBundle *TweakBundle() {
             picker.title = @"Slider";
             picker.delegate = (NSObject <HBColorPickerDelegate> *)self;
             picker.popoverPresentationController.sourceView = cell;
-            UIColor *color = [UIColor LOT_colorWithHexString:GetSliderColor()];
+            UIColor *color = sliderUIColor();
             HBColorPickerConfiguration *config = [[HBColorPickerConfiguration alloc] initWithColor:color];
             config.supportsAlpha = NO;
             picker.configuration = config;
@@ -190,7 +186,7 @@ NSBundle *TweakBundle() {
             picker.title = @"Scrubber";
             picker.delegate = (NSObject <HBColorPickerDelegate> *)self;
             picker.popoverPresentationController.sourceView = cell;
-            UIColor *color = [UIColor LOT_colorWithHexString:GetScrubberColor()];
+            UIColor *color = scrubberUIColor();
             HBColorPickerConfiguration *config = [[HBColorPickerConfiguration alloc] initWithColor:color];
             config.supportsAlpha = NO;
             picker.configuration = config;
@@ -266,7 +262,7 @@ NSBundle *TweakBundle() {
 
     // Scrubber size
     NSString *title = LOC(@"SCRUBBER_SIZE");
-    YTSettingsSectionItem *option2 = [YTSettingsSectionItemClass itemWithTitle:title
+    YTSettingsSectionItem *scrubberSize = [YTSettingsSectionItemClass itemWithTitle:title
         titleDescription:LOC(@"SCRUBBER_SIZE_DESC")
         accessibilityIdentifier:nil
         detailTextBlock:^NSString *() {
@@ -275,7 +271,7 @@ NSBundle *TweakBundle() {
         }
         selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
             NSMutableArray <YTSettingsSectionItem *> *rows = [NSMutableArray array];
-            for (int i = 0; i <= 50; i += 5) {
+            for (int i = 0; i <= 200; i += 5) {
                 NSString *sizeTitle = i ? [NSString stringWithFormat:@"%d%%", i] : LOC(@"SCRUBBER_SIZE_DEFAULT");
                 YTSettingsSectionItem *size = [YTSettingsSectionItemClass checkmarkItemWithTitle:sizeTitle titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
                     [[NSUserDefaults standardUserDefaults] setInteger:i forKey:ScrubberSizeKey];
@@ -290,7 +286,7 @@ NSBundle *TweakBundle() {
             [settingsViewController pushViewController:picker];
             return YES;
         }];
-    [sectionItems addObject:option2];
+    [sectionItems addObject:scrubberSize];
 
     if ([settingsViewController respondsToSelector:@selector(setSectionItems:forCategory:title:icon:titleDescription:headerHidden:)]) {
         YTIIcon *icon = [%c(YTIIcon) new];
@@ -309,3 +305,10 @@ NSBundle *TweakBundle() {
 }
 
 %end
+
+%ctor {
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        EnabledKey: @YES,
+    }];
+    %init;
+}
