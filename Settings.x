@@ -305,10 +305,3 @@ NSBundle *TweakBundle() {
 }
 
 %end
-
-%ctor {
-    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
-        EnabledKey: @YES,
-    }];
-    %init;
-}

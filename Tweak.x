@@ -213,7 +213,7 @@ static void findViewAndSetScrubberIcon(YTMainAppVideoPlayerOverlayViewController
         YTIPlayerBarDecorationModel *model = [self valueForKey:@"_model"];
         YTIPlayerBarPlayingStateOverlayMode overlayMode = model.playingState.overlayMode;
         model.playingState.overlayMode = PLAYER_BAR_OVERLAY_MODE_DEFAULT;
-        if ([model respondsToSelector:@selector(style)])
+        if ([model respondsToSelector:@selector(style)] && [model.style respondsToSelector:@selector(gradientColor)])
             model.style.gradientColor = nil;
         %orig;
         model.playingState.overlayMode = overlayMode;
@@ -301,6 +301,9 @@ static void findViewAndSetScrubberIcon(YTMainAppVideoPlayerOverlayViewController
 %end
 
 %ctor {
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        EnabledKey: @YES,
+    }];
     if (!IsEnabled(EnabledKey)) return;
     %init;
 }
