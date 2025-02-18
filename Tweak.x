@@ -1,4 +1,5 @@
 #import <UIKit/UIImage+Private.h>
+#import <UIKit/UIImageAsset+Private.h>
 #import <YouTubeHeader/UIColor+YouTube.h>
 #import <YouTubeHeader/UIImage+YouTube.h>
 #import <YouTubeHeader/YTColor.h>
@@ -11,10 +12,6 @@
 #import <YouTubeHeader/YTPlayerBarSegmentView.h>
 #import <YouTubeHeader/YTSegmentableInlinePlayerBarView.h>
 #import "Settings.h"
-
-@interface UIImageAsset (Private)
-@property (nonatomic, copy, readwrite) NSString *assetName;
-@end
 
 @interface YTModularPlayerBarView (Addition)
 @property (retain, nonatomic) UIImageView *tweakCustomScrubberImageView;
