@@ -1,5 +1,5 @@
-//#import <UIKit/UIImage+Private.h>
-//#import <UIKit/UIImageAsset+Private.h>
+#import <UIKit/UIImage+Private.h>
+#import <UIKit/UIImageAsset+Private.h>
 #import <YouTubeHeader/UIColor+YouTube.h>
 #import <YouTubeHeader/UIImage+YouTube.h>
 #import <YouTubeHeader/YTColor.h>
