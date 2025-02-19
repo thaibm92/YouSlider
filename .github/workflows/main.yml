@@ -25,7 +25,7 @@ jobs:
         with:
           repository: thaibm92/sdks
           ref: master
-          sparse-checkout: iPhoneOS17.5.sdk
+          sparse-checkout: iPhoneOS18.0.sdk
           path: theos/sdks
           
       - name: Checkout PoomSmart/YouTubeHeader
