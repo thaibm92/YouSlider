@@ -44,7 +44,7 @@ jobs:
 
       - name: Update Theos
         run: |
-          export THEOS=theos
+          export THEOS=$(pwd)/theos
           $THEOS/bin/update-theos
 
       - name: Build Package 
