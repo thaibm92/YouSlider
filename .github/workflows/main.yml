@@ -42,6 +42,11 @@ jobs:
           ref: master
           path: PSHeader
 
+      - name: Update Theos
+        run: |
+          export THEOS=theos
+          $THEOS/bin/update-theos
+
       - name: Build Package 
         id: build_package
         run: |
