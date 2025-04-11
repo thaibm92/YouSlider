@@ -1,0 +1,31 @@
+"ENABLED" = "Kích hoạt";
+"ENABLED_DESC" = "Yêu cầu khởi động lại ứng dụng.";
+
+"SLIDER_COLOR" = "Thay đổi màu thanh trượt";
+"SLIDER_COLOR_DESC" = "Thay đổi màu của thanh trượt.  Điều này cũng thay thế kiểu gradient của thanh trượt cho các phiên bản YouTube gần đây.";
+"SLIDER_COLOR_VALUE" = "Giá trị màu thanh trượt";
+
+"SCRUBBER_COLOR" = "Thay đổi màu sắc scrubber";
+"SCRUBBER_COLOR_DESC" = "Thay đổi màu của máy chà.  Điều này cũng vẽ toàn bộ hình ảnh máy lọc tùy chỉnh với màu được chỉ định.";
+"SCRUBBER_COLOR_VALUE" = "Giá trị màu sắc scrubber";
+
+"SCRUBBER_IMAGE" = "Sử dụng hình ảnh máy lọc tùy chỉnh";
+"SCRUBBER_IMAGE_DESC" = "Sử dụng một hình ảnh tùy chỉnh cho máy scrubber sàn.  Hình ảnh sẽ thay thế máy lọc vòng tròn mặc định.";
+
+"IMPORT_IMAGE" = "Nhập hình ảnh scrubber";
+"IMPORT_IMAGE_DESC" = "Nhập hình ảnh để sử dụng scrubber từ bảng tạm.  Đối với trải nghiệm tối ưu, hình ảnh không nên lớn hơn 48px bởi 48px.";
+
+"IMPORT_THIS_IMAGE" = "Nhập hình ảnh này?";
+"IMPORT_THIS_IMAGE_DESC" = "Hình ảnh sẽ được lưu vào thư mục tài liệu ứng dụng và được sử dụng cho scrubber video.";
+
+"IMAGE_TOO_LARGE" = "Hình ảnh quá lớn";
+"IMAGE_TOO_LARGE_DESC" = "Hình ảnh quá lớn.  Hình ảnh không được lớn hơn 48px bởi 48px.";
+
+"VIEW_CURRENT_IMAGE" = "Xem hình ảnh scrubber hiện tại";
+
+"NO_IMAGE" = "Không tìm thấy hình ảnh";
+"NO_IMAGE_DESC" = "Không có hình ảnh được tìm thấy trong bảng tạm.  Đảm bảo rằng một hình ảnh được sao chép vào bảng tạm trước khi nhập.";
+
+"SCRUBBER_SIZE" = "Tăng kích thước scrubber";
+"SCRUBBER_SIZE_DESC" = "Tăng kích thước của scrubber.  Kích thước scrubber được tỷ lệ dựa trên kích thước scrubber mặc định.  Bạn có thể phải khởi động lại ứng dụng để có hiệu lực.";
+"SCRUBBER_SIZE_DEFAULT" = "Mặc định";
