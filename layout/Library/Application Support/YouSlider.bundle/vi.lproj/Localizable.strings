@@ -9,7 +9,7 @@
 "SCRUBBER_COLOR_DESC" = "Thay đổi màu của máy chà.  Điều này cũng vẽ toàn bộ hình ảnh máy lọc tùy chỉnh với màu được chỉ định.";
 "SCRUBBER_COLOR_VALUE" = "Giá trị màu sắc scrubber";
 
-"SCRUBBER_IMAGE" = "Sử dụng hình ảnh máy lọc tùy chỉnh";
+"SCRUBBER_IMAGE" = "Sử dụng hình ảnh scrubber tùy chỉnh";
 "SCRUBBER_IMAGE_DESC" = "Sử dụng một hình ảnh tùy chỉnh cho máy scrubber sàn.  Hình ảnh sẽ thay thế máy lọc vòng tròn mặc định.";
 
 "IMPORT_IMAGE" = "Nhập hình ảnh scrubber";
