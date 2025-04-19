@@ -1,5 +1,6 @@
 #import <UIKit/UIImage+Private.h>
 #import <UIKit/UIImageAsset+Private.h>
+#import <YouTubeHeader/ASImageNodeDrawParameters.h>
 #import <YouTubeHeader/UIColor+YouTube.h>
 #import <YouTubeHeader/UIImage+YouTube.h>
 #import <YouTubeHeader/YTColor.h>
@@ -292,6 +293,24 @@ static void findViewAndSetScrubberIcon(YTMainAppVideoPlayerOverlayViewController
 
 - (void)setWatchNextResponse:(id)response {
     findViewAndSetScrubberIcon(self);
+    %orig;
+}
+
+%end
+
+%hook YTBrandGradientImageProcessor
+
+- (void)willDrawInContext:(CGContextRef)ctx drawParameters:(ASImageNodeDrawParameters *)drawParameters {
+    if (IsEnabled(SliderColorKey)) {
+        UIColor *color = sliderUIColor();
+        if (color) {
+            CGRect totalRect = CGContextGetClipBoundingBox(ctx);
+            CGRect progressRect = CGRectIntersection([drawParameters drawRect], totalRect);
+            CGContextSetFillColorWithColor(ctx, color.CGColor);
+            CGContextFillRect(ctx, progressRect);
+            return;
+        }
+    }
     %orig;
 }
 
