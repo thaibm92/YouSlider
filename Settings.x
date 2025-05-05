@@ -288,6 +288,18 @@ NSBundle *TweakBundle() {
         }];
     [sectionItems addObject:scrubberSize];
 
+    // Animated slider and scrubber
+    YTSettingsSectionItem *animated = [YTSettingsSectionItemClass switchItemWithTitle:LOC(@"ANIMATED_SLIDER")
+        titleDescription:LOC(@"ANIMATED_SLIDER_DESC")
+        accessibilityIdentifier:nil
+        switchOn:IsEnabled(AnimatedSliderKey)
+        switchBlock:^BOOL (YTSettingsCell *cell, BOOL enabled) {
+            [[NSUserDefaults standardUserDefaults] setBool:enabled forKey:AnimatedSliderKey];
+            return YES;
+        }
+        settingItemId:0];
+    [sectionItems addObject:animated];
+
     if ([settingsViewController respondsToSelector:@selector(setSectionItems:forCategory:title:icon:titleDescription:headerHidden:)]) {
         YTIIcon *icon = [%c(YTIIcon) new];
         icon.iconType = YT_PLAY_CIRCLE;

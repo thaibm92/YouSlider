@@ -29,3 +29,6 @@
 "SCRUBBER_SIZE" = "Tăng kích thước Scrubber";
 "SCRUBBER_SIZE_DESC" = "Tăng kích thước của Scrubber.  Kích thước Scrubber được tỷ lệ dựa trên kích thước Scrubber mặc định.  Bạn có thể phải khởi động lại ứng dụng để có hiệu lực.";
 "SCRUBBER_SIZE_DEFAULT" = "Mặc định";
+
+"ANIMATED_SLIDER" = "Hoạt hình thanh trượt và Scrubber";
+"ANIMATED_SLIDER_DESC" = "Hoạt hình thanh trượt và Scrubber khi tiến trình video thay đổi một cách mượt mà.";
