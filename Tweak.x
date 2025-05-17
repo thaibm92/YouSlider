@@ -1,6 +1,9 @@
 #import <UIKit/UIImage+Private.h>
 #import <UIKit/UIImageAsset+Private.h>
 #import <YouTubeHeader/ASImageNodeDrawParameters.h>
+#import <YouTubeHeader/_ASDisplayView.h>
+#import <YouTubeHeader/ELMContainerNode.h>
+#import <YouTubeHeader/ELMNodeController.h>
 #import <YouTubeHeader/UIColor+YouTube.h>
 #import <YouTubeHeader/UIImage+YouTube.h>
 #import <YouTubeHeader/YTColor.h>
@@ -64,15 +67,28 @@ static void initScrubberCircle(UIView *self) {
     updateScrubberSize(scrubberCircle, scrubberScale);
 }
 
-static void updateScrubberColor(UIView *self) {
+static CGPoint getScrubberCircleCenter(UIView *self) {
     UIView *scrubberCircle = [self valueForKey:@"_scrubberCircle"];
-    if (IsEnabled(ScrubberImageKey))
-        scrubberCircle.backgroundColor = nil;
-    else if (IsEnabled(ScrubberImageColorKey)) {
-        UIColor *scrubberColor = scrubberUIColor();
-        if (!scrubberColor) return;
-        scrubberCircle.backgroundColor = scrubberColor;
+    return scrubberCircle.center;
+}
+
+static void updateScrubberColorAndPosition(UIView *self, BOOL alterScrubber, CGPoint originalCenter) {
+    UIView *scrubberCircle = [self valueForKey:@"_scrubberCircle"];
+    if (alterScrubber) {
+        if (IsEnabled(ScrubberImageKey))
+            scrubberCircle.backgroundColor = nil;
+        else if (IsEnabled(ScrubberImageColorKey)) {
+            UIColor *scrubberColor = scrubberUIColor();
+            if (!scrubberColor) return;
+            scrubberCircle.backgroundColor = scrubberColor;
+        }
     }
+    if (!IsEnabled(AnimatedSliderKey) || CGPointEqualToPoint(originalCenter, CGPointZero)) return;
+    CGPoint newCenter = scrubberCircle.center;
+    scrubberCircle.center = originalCenter;
+    [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+        scrubberCircle.center = newCenter;
+    } completion:nil];
 }
 
 static CGFloat getScrubberScale(CGFloat scale) {
@@ -98,7 +114,7 @@ static void setTweakCustomScrubberIcon(id self_) {
     } else {
         [imageView removeFromSuperview];
         self.tweakCustomScrubberImageView = nil;
-        updateScrubberColor(self);
+        updateScrubberColorAndPosition(self, YES, CGPointZero);
     }
 }
 
@@ -139,8 +155,9 @@ static void findViewAndSetScrubberIcon(YTMainAppVideoPlayerOverlayViewController
 }
 
 - (void)layoutSubviews {
+    CGPoint center = getScrubberCircleCenter(self);
     %orig;
-    updateScrubberColor(self);
+    updateScrubberColorAndPosition(self, NO, center);
 }
 
 %end
@@ -162,7 +179,7 @@ static void findViewAndSetScrubberIcon(YTMainAppVideoPlayerOverlayViewController
 
 - (void)setMode:(int)mode {
     %orig;
-    updateScrubberColor(self);
+    updateScrubberColorAndPosition(self, YES, CGPointZero);
 }
 
 - (void)resetPlayerBarModeColors {
@@ -173,15 +190,18 @@ static void findViewAndSetScrubberIcon(YTMainAppVideoPlayerOverlayViewController
         [self setValue:color forKey:@"_progressBarColor"];
         [self setValue:color forKey:@"_userIsScrubbingProgressBarColor"];
     }
-    updateScrubberColor(self);
+    updateScrubberColorAndPosition(self, YES, CGPointZero);
+}
+
+- (void)layoutSubviews {
+    CGPoint center = getScrubberCircleCenter(self);
+    %orig;
+    updateScrubberColorAndPosition(self, NO, center);
 }
 
 %end
 
-%hook YTPlayerBarSegmentView
-
-- (void)drawHighlightedChapter:(CGRect)rect {
-    %orig;
+static void setSliderColorIfNeeded(YTPlayerBarSegmentView *self, CGRect rect) {
     if (!IsEnabled(SliderColorKey)) return;
     UIColor *color = sliderUIColor();
     if (!color) return;
@@ -191,15 +211,48 @@ static void findViewAndSetScrubberIcon(YTMainAppVideoPlayerOverlayViewController
     UIRectFill(fillRect);
 }
 
+%hook YTPlayerBarSegmentView
+
+- (void)drawHighlightedChapter:(CGRect)rect {
+    if (IsEnabled(AnimatedSliderKey))
+        [UIView
+            transitionWithView:self
+            duration:0.2
+            options:UIViewAnimationOptionTransitionCrossDissolve | UIViewAnimationOptionCurveLinear
+            animations:^{
+                %orig;
+                setSliderColorIfNeeded(self, rect);
+            }
+            completion:nil];
+    else {
+        %orig;
+        setSliderColorIfNeeded(self, rect);
+    }
+}
+
 - (void)drawUnhighlightedChapter:(CGRect)rect {
-    %orig;
-    if (!IsEnabled(SliderColorKey)) return;
-    UIColor *color = sliderUIColor();
-    if (!color) return;
-    CGFloat playingProgress = [[self valueForKey:@"_playingProgress"] doubleValue];
-    CGRect fillRect = CGRectMake(0, 0, rect.size.width * playingProgress, rect.size.height);
-    [color setFill];
-    UIRectFill(fillRect);
+    if (IsEnabled(AnimatedSliderKey))
+        [UIView
+            transitionWithView:self
+            duration:0.2
+            options:UIViewAnimationOptionTransitionCrossDissolve | UIViewAnimationOptionCurveLinear
+            animations:^{
+                %orig;
+                setSliderColorIfNeeded(self, rect);
+            }
+            completion:nil];
+    else {
+        %orig;
+        setSliderColorIfNeeded(self, rect);
+    }
+}
+
+%end
+
+%hook YTColor
+
++ (BOOL)cairoRefreshSignatureMomentsEnabled {
+    return IsEnabled(SliderColorKey) ? NO : %orig;
 }
 
 %end
@@ -220,12 +273,31 @@ static void findViewAndSetScrubberIcon(YTMainAppVideoPlayerOverlayViewController
 }
 
 - (void)drawProgressRect:(CGRect)rect withColor:(UIColor *)color {
-    %orig(rect, IsEnabled(SliderColorKey) ? sliderUIColor() : color);
+    if (IsEnabled(AnimatedSliderKey))
+        [UIView
+            transitionWithView:self
+            duration:0.2
+            options:UIViewAnimationOptionTransitionCrossDissolve | UIViewAnimationOptionCurveLinear
+            animations:^{
+                %orig(rect, IsEnabled(SliderColorKey) ? sliderUIColor() : color);
+            }
+            completion:nil];
+    else
+        %orig(rect, IsEnabled(SliderColorKey) ? sliderUIColor() : color);
 }
 
 %end
 
 %hook YTProgressView
+
+- (void)layoutSubviews {
+    if (IsEnabled(AnimatedSliderKey))
+        [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+            %orig;
+        } completion:nil];
+    else
+        %orig;
+}
 
 - (void)setProgressBarColor:(UIColor *)color {
     %orig(IsEnabled(SliderColorKey) ? sliderUIColor() : color);
@@ -312,6 +384,39 @@ static void findViewAndSetScrubberIcon(YTMainAppVideoPlayerOverlayViewController
         }
     }
     %orig;
+}
+
+%end
+
+static ELMNodeController *getNodeControllerParent(ELMNodeController *nodeController) {
+    if ([nodeController respondsToSelector:@selector(parent)])
+        return nodeController.parent;
+    return [nodeController.node.yogaParent controller];
+}
+
+%hook _ASDisplayView
+
+- (void)didMoveToSuperview {
+    %orig;
+    if (self.bounds.size.height) return;
+    ELMContainerNode *containerNode = (ELMContainerNode *)self.keepalive_node;
+    if (![containerNode isKindOfClass:%c(ELMContainerNode)]) return;
+    UIColor *currentColor = [containerNode valueForKey:@"_stretchableBackgroundColor"];
+    if (currentColor == nil || ![currentColor isEqual:[%c(YTColor) youTubeRed]]) return;
+    ASDisplayNode *node = nil;
+    ELMNodeController *nodeController = [containerNode controller];
+    do {
+        node = nodeController.node;
+        if ([node.accessibilityIdentifier isEqualToString:@"eml.thumbnail"])
+            break;
+        nodeController = getNodeControllerParent(nodeController);
+    } while (nodeController);
+    if (![node.accessibilityIdentifier isEqualToString:@"eml.thumbnail"]) return;
+    if (!IsEnabled(SliderColorKey)) return;
+    UIColor *color = sliderUIColor();
+    if (color == nil) return;
+    [containerNode setValue:color forKey:@"_stretchableBackgroundColor"];
+    self.backgroundColor = color;
 }
 
 %end

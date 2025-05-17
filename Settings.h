@@ -6,3 +6,4 @@
 #define ScrubberImageColorValueKey @"YSScrubberColorValue"
 #define ScrubberImageKey @"YSScrubberImage"
 #define ScrubberSizeKey @"YSScrubberSize"
+#define AnimatedSliderKey @"YSAnimation"

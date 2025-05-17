@@ -29,3 +29,6 @@
 "SCRUBBER_SIZE" = "Increase scrubber size";
 "SCRUBBER_SIZE_DESC" = "Increase the size of the scrubber. The scrubber size is scaled based on the default scrubber size. You may have to restart the app for the changes to take effect.";
 "SCRUBBER_SIZE_DEFAULT" = "Default";
+
+"ANIMATED_SLIDER" = "Animate slider and scrubber";
+"ANIMATED_SLIDER_DESC" = "Animate the slider and scrubber when the video is playing smoothly.";
