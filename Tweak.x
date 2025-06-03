@@ -154,6 +154,16 @@ static void findViewAndSetScrubberIcon(YTMainAppVideoPlayerOverlayViewController
     %orig;
 }
 
+- (void)maybeSetDefaultScrubberBackgroundColor {
+    %orig;
+    if (IsEnabled(ScrubberImageColorKey)) {
+        UIColor *scrubberColor = scrubberUIColor();
+        if (!scrubberColor) return;
+        UIView *scrubberCircle = [self valueForKey:@"_scrubberCircle"];
+        scrubberCircle.backgroundColor = scrubberColor;
+    }
+}
+
 - (void)layoutSubviews {
     CGPoint center = getScrubberCircleCenter(self);
     %orig;

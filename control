@@ -1,8 +1,8 @@
 Package: com.ps.youslider
 Name: YouSlider
-Version: 1.2.0
+Version: 1.2.1
 Architecture: iphoneos-arm
-Description: Customize YouTube video slider and scrubber.
+Description: Customizes YouTube video slider and scrubber.
 Maintainer: PoomSmart
 Author: PoomSmart
 Section: Tweaks
