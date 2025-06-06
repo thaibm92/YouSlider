@@ -412,7 +412,7 @@ static ELMNodeController *getNodeControllerParent(ELMNodeController *nodeControl
     ELMContainerNode *containerNode = (ELMContainerNode *)self.keepalive_node;
     if (![containerNode isKindOfClass:%c(ELMContainerNode)]) return;
     UIColor *currentColor = [containerNode valueForKey:@"_stretchableBackgroundColor"];
-    if (currentColor == nil || ![currentColor isEqual:[%c(YTColor) youTubeRed]]) return;
+    if (currentColor == nil || ![currentColor isEqual:[%c(YTColor) colorWithRGB:0xFF0000 floatAlpha:1]]) return;
     ASDisplayNode *node = nil;
     ELMNodeController *nodeController = [containerNode controller];
     do {
