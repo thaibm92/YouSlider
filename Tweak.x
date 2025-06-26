@@ -154,6 +154,16 @@ static void findViewAndSetScrubberIcon(YTMainAppVideoPlayerOverlayViewController
     %orig;
 }
 
+- (void)maybeSetDefaultScrubberBackgroundColor {
+    %orig;
+    if (IsEnabled(ScrubberImageColorKey)) {
+        UIColor *scrubberColor = scrubberUIColor();
+        if (!scrubberColor) return;
+        UIView *scrubberCircle = [self valueForKey:@"_scrubberCircle"];
+        scrubberCircle.backgroundColor = scrubberColor;
+    }
+}
+
 - (void)layoutSubviews {
     CGPoint center = getScrubberCircleCenter(self);
     %orig;
@@ -402,7 +412,7 @@ static ELMNodeController *getNodeControllerParent(ELMNodeController *nodeControl
     ELMContainerNode *containerNode = (ELMContainerNode *)self.keepalive_node;
     if (![containerNode isKindOfClass:%c(ELMContainerNode)]) return;
     UIColor *currentColor = [containerNode valueForKey:@"_stretchableBackgroundColor"];
-    if (currentColor == nil || ![currentColor isEqual:[%c(YTColor) youTubeRed]]) return;
+    if (currentColor == nil || ![currentColor isEqual:[%c(YTColor) colorWithRGB:0xFF0000 floatAlpha:1]]) return;
     ASDisplayNode *node = nil;
     ELMNodeController *nodeController = [containerNode controller];
     do {
